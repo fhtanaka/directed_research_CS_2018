@@ -1,0 +1,150 @@
+Time:
+			No Frauds					Frauds
+mean:		94838.202					80746.807
+median:		84711.0					75568.5
+
+V1:
+			No Frauds					Frauds
+mean:		0.008					-4.772
+median:		0.02					-2.342
+
+V2:
+			No Frauds					Frauds
+mean:		-0.006					3.624
+median:		0.064					2.718
+
+V3:
+			No Frauds					Frauds
+mean:		0.012					-7.033
+median:		0.182					-5.075
+
+V4:
+			No Frauds					Frauds
+mean:		-0.008					4.542
+median:		-0.022					4.177
+
+V5:
+			No Frauds					Frauds
+mean:		0.005					-3.151
+median:		-0.053					-1.523
+
+V6:
+			No Frauds					Frauds
+mean:		0.002					-1.398
+median:		-0.273					-1.425
+
+V7:
+			No Frauds					Frauds
+mean:		0.01					-5.569
+median:		0.041					-3.034
+
+V8:
+			No Frauds					Frauds
+mean:		-0.001					0.571
+median:		0.022					0.622
+
+V9:
+			No Frauds					Frauds
+mean:		0.004					-2.581
+median:		-0.05					-2.209
+
+V10:
+			No Frauds					Frauds
+mean:		0.01					-5.677
+median:		-0.092					-4.579
+
+V11:
+			No Frauds					Frauds
+mean:		-0.007					3.8
+median:		-0.035					3.586
+
+V12:
+			No Frauds					Frauds
+mean:		0.011					-6.259
+median:		0.142					-5.503
+
+V13:
+			No Frauds					Frauds
+mean:		0.0					-0.109
+median:		-0.014					-0.066
+
+V14:
+			No Frauds					Frauds
+mean:		0.012					-6.972
+median:		0.052					-6.73
+
+V15:
+			No Frauds					Frauds
+mean:		0.0					-0.093
+median:		0.048					-0.057
+
+V16:
+			No Frauds					Frauds
+mean:		0.007					-4.14
+median:		0.067					-3.55
+
+V17:
+			No Frauds					Frauds
+mean:		0.012					-6.666
+median:		-0.065					-5.303
+
+V18:
+			No Frauds					Frauds
+mean:		0.004					-2.246
+median:		-0.003					-1.664
+
+V19:
+			No Frauds					Frauds
+mean:		-0.001					0.681
+median:		0.003					0.647
+
+V20:
+			No Frauds					Frauds
+mean:		-0.001					0.372
+median:		-0.063					0.285
+
+V21:
+			No Frauds					Frauds
+mean:		-0.001					0.714
+median:		-0.03					0.592
+
+V22:
+			No Frauds					Frauds
+mean:		-0.0					0.014
+median:		0.007					0.048
+
+V23:
+			No Frauds					Frauds
+mean:		0.0					-0.04
+median:		-0.011					-0.073
+
+V24:
+			No Frauds					Frauds
+mean:		0.0					-0.105
+median:		0.041					-0.061
+
+V25:
+			No Frauds					Frauds
+mean:		-0.0					0.041
+median:		0.016					0.088
+
+V26:
+			No Frauds					Frauds
+mean:		-0.0					0.052
+median:		-0.052					0.004
+
+V27:
+			No Frauds					Frauds
+mean:		-0.0					0.171
+median:		0.001					0.395
+
+V28:
+			No Frauds					Frauds
+mean:		-0.0					0.076
+median:		0.011					0.146
+
+Amount:
+			No Frauds					Frauds
+mean:		88.291					122.211
+median:		22.0					9.25
+
