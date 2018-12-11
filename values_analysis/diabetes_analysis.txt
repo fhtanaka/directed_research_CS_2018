@@ -2,12 +2,13 @@ Pima Indians Diabetes Database
 
 Normal: 65.1%  of the dataset
 Diabets: 34.9%  of the dataset
+
 Pregnancies:
 			Normal					Diabets
-min:		0					    0
-max:		13					    17
+min:		0					0
+max:		13					17
 mean:		3.298					4.866
-median:		2.0					    4.0
+median:		2.0					4.0
 
 Glucose:
 			Normal					Diabets
