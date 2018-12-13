@@ -40,4 +40,7 @@ class CreditCardDataSet(Dataset):
             item = self.transform(item)
         return item
 
+    def get_columns(self):
+        return self.data.columns
+
 
