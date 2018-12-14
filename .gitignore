@@ -56,4 +56,4 @@ creditcard.csv
 *.txt
 data/models/
 runs/
-fakedata/*
+fake_data/*.csv
