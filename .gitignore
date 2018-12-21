@@ -54,6 +54,7 @@ dkms.conf
 __pycache__
 creditcard.csv
 *.txt
+*.dot
 data/models/
 runs/
 fake_data/*.csv
