@@ -2,7 +2,6 @@ import torch
 import pandas as pd
 import os
 from sklearn import preprocessing
-from utils import Logger
 from torch import nn, optim
 from torch.autograd.variable import Variable
 from torchvision import transforms, datasets, utils
@@ -16,7 +15,7 @@ class ToTensor(object):
         # print (torch.from_numpy(sample.values)[2].item())
         return torch.from_numpy(sample.values)
 
-class CreditCardDataSet(Dataset):
+class DataSet(Dataset):
     """Face Landmarks dataset."""
 
     def __init__(self, csv_file, root_dir, transform=transforms.Compose([ToTensor()])):
@@ -43,5 +42,29 @@ class CreditCardDataSet(Dataset):
 
     def get_columns(self):
         return self.data.columns
+
+class DataAtts():
+    def __init__(self, file_name):
+        if file_name == "original_data/data.csv":
+            self.message = "Breast Cancer Wisconsin (Diagnostic) Data Set"
+            self.class_name = "diagnosis"
+            self.values_names = {0: "Benign", 1: "Malignant"}
+            self.class_len = 32
+            self.fname="data"
+        elif file_name == "original_data/creditcard.csv":
+            self.message = "Credit Card Fraud Detection"
+            self.class_name = "Class"
+            self.values_names = {0: "No Frauds", 1: "Frauds"}
+            self.class_len = 31
+            self.fname="creditcard"
+        elif file_name == "original_data/diabetes.csv":
+            self.message="Pima Indians Diabetes Database"
+            self.class_name = "Outcome"
+            self.values_names = {0: "Normal", 1: "Diabets"}
+            self.class_len = 9
+            self.fname="diabetes"
+        else:
+            print("File not found, exiting")
+            exit()
 
 

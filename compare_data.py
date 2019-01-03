@@ -5,29 +5,17 @@ from scipy.stats import norm
 import ipywidgets as widgets
 import matplotlib.pyplot as plt
 import glob
+from data_treatment import DataAtts
 from IPython.display import display
 
 def compare_data (original_data, fake_data, size_of_fake, mode="save"):
-    if original_data == "data.csv":
-        message = "Breast Cancer Wisconsin (Diagnostic) Data Set"
-        class_name = "diagnosis"
-        values_names = {0: "Benign", 1: "Malignant"}
-    elif original_data == "creditcard.csv":
-        message = "Credit Card Fraud Detection"
-        class_name = "Class"
-        values_names = {0: "No Frauds", 1: "Frauds"}
-    elif original_data == "diabetes.csv":
-        message="Pima Indians Diabetes Database"
-        class_name = "Outcome"
-        values_names = {0: "Normal", 1: "Diabets"}
-    else:
-         exit()
+    dataAtts = DataAtts(original_data)
     
     data = pd.read_csv(original_data)
     fake_data = pd.read_csv(fake_data).tail(size_of_fake)
-    print(message, "\n")
-    print(values_names[0], round(data[class_name].value_counts()[0]/len(data) * 100,2), '%  of the dataset')
-    print(values_names[1], round(data[class_name].value_counts()[1]/len(data) * 100,2), '%  of the dataset')
+    print(dataAtts.message, "\n")
+    print(dataAtts.values_names[0], round(data[dataAtts.class_name].value_counts()[0]/len(data) * 100,2), '%  of the dataset')
+    print(dataAtts.values_names[1], round(data[dataAtts.class_name].value_counts()[1]/len(data) * 100,2), '%  of the dataset')
     
     classes = list(data)
 
@@ -43,7 +31,7 @@ def compare_data (original_data, fake_data, size_of_fake, mode="save"):
         plt.hist(real_dist, 50, density=True, alpha=0.5)
         plt.hist(fake_dist, 50, density=True, alpha=0.5, facecolor='r')
         if mode=="save":
-            plt.savefig('fake_data/'+ original_data[:-4] + "/"+name+'_distribution.png')
+            plt.savefig('fake_data/'+ dataAtts.fname + "/"+name+'_distribution.png')
         elif mode=="show":
             plt.show()
         plt.clf()
