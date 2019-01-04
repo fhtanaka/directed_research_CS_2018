@@ -18,7 +18,7 @@ class ToTensor(object):
 class DataSet(Dataset):
     """Face Landmarks dataset."""
 
-    def __init__(self, csv_file, root_dir, transform=transforms.Compose([ToTensor()])):
+    def __init__(self, csv_file, root_dir, transform=transforms.Compose([ToTensor()]), training_porcentage=0.7):
         """
         Args:
             csv_file (string): Path to the csv file with annotations.
@@ -27,7 +27,9 @@ class DataSet(Dataset):
                 on a sample.
         """
         # self.data = pd.read_csv(csv_file).head(100000)
-        self.data = pd.read_csv(csv_file)
+        self.file = pd.read_csv(csv_file)
+        self.data = self.file.head(int(self.file.shape[0]*training_porcentage))
+        self.test_data = self.file.tail(int(self.file.shape[0]*(1-training_porcentage)))
         self.root_dir = root_dir
         self.transform = transform
 
