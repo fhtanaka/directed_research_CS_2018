@@ -63,6 +63,25 @@ class DataAtts():
             self.values_names = {0: "Normal", 1: "Diabets"}
             self.class_len = 9
             self.fname="diabetes"
+
+        if file_name == "original_data/data_escalonated.csv":
+            self.message = "Breast Cancer Wisconsin (Diagnostic) Data Set eSCALONATED"
+            self.class_name = "diagnosis"
+            self.values_names = {0: "Benign", 1: "Malignant"}
+            self.class_len = 32
+            self.fname="data_escalonated"
+        elif file_name == "original_data/creditcard_escalonated.csv":
+            self.message = "Credit Card Fraud Detection eSCALONATED"
+            self.class_name = "Class"
+            self.values_names = {0: "No Frauds", 1: "Frauds"}
+            self.class_len = 31
+            self.fname="creditcard_escalonated"
+        elif file_name == "original_data/diabetes_escalonated.csv":
+            self.message="Pima Indians Diabetes Database eSCALONATED"
+            self.class_name = "Outcome"
+            self.values_names = {0: "Normal", 1: "Diabets"}
+            self.class_len = 9
+            self.fname="diabetes_escalonated"
         else:
             print("File not found, exiting")
             exit()
