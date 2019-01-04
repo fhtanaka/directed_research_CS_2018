@@ -17,8 +17,8 @@ def create_and_evaluate_DT (training_data, testing_data, depth=5, min_leaves=1):
     clf1 = DT(max_depth = depth, min_samples_leaf=min_leaves)
     clf1 = clf1.fit(trainX, y_train)
 
-    export_graphviz(clf1, out_file="tree.dot", feature_names=trainX.columns, class_names=["0","1"], filled=True, rounded=True)
-    g = pydotplus.graph_from_dot_file(path="tree.dot")
+    export_graphviz(clf1, out_file="models/tree.dot", feature_names=trainX.columns, class_names=["0","1"], filled=True, rounded=True)
+    g = pydotplus.graph_from_dot_file(path="models/tree.dot")
     Image(g.create_png())
 
     pred = clf1.predict_proba(testX)
