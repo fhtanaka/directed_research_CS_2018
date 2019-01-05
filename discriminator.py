@@ -11,12 +11,13 @@ class DiscriminatorNet(torch.nn.Module):
         super(DiscriminatorNet, self).__init__()
         
         out_features = 1
-        hidden_layers.insert(0, in_features)
+        self.layers = hidden_layers.copy()
+        self.layers.insert(0, in_features)
 
-        for count in range(0, len(hidden_layers)-1):
+        for count in range(0, len(self.layers)-1):
             self.add_module("hidden_" + str(count), 
                 nn.Sequential(
-                    nn.Linear(hidden_layers[count], hidden_layers[count+1]),
+                    nn.Linear(self.layers[count], self.layers[count+1]),
                     nn.LeakyReLU(leakyRelu),
                     nn.Dropout(dropout)
                 )
@@ -24,7 +25,7 @@ class DiscriminatorNet(torch.nn.Module):
         
         self.add_module("out", 
             nn.Sequential(
-                nn.Linear(hidden_layers[-1], out_features),
+                nn.Linear(self.layers[-1], out_features),
                 torch.nn.Sigmoid()
             )
         )
