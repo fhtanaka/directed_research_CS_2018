@@ -7,31 +7,33 @@ class GeneratorNet(torch.nn.Module):
     """
     A three hidden-layer generative neural network
     """
-    def __init__(self, class_len):
+    def __init__(self, out_features, leakyRelu=0.2, hidden_layers=[256, 512, 1024], in_features=100, escalonate=False):
         super(GeneratorNet, self).__init__()
-        n_features = 100
-        n_out = class_len
         
-        self.hidden0 = nn.Sequential(
-            nn.Linear(n_features, 256),
-            nn.LeakyReLU(0.2)
-        )
-        self.hidden1 = nn.Sequential(            
-            nn.Linear(256, 512),
-            nn.LeakyReLU(0.2)
-        )
-        self.hidden2 = nn.Sequential(
-            nn.Linear(512, 1024),
-            nn.LeakyReLU(0.2)
-        )
-        
-        self.out = nn.Sequential(
-            nn.Linear(1024, n_out)
-        )
+        hidden_layers.insert(0, in_features)
 
+        for count in range(0, len(hidden_layers)-1):
+            self.add_module("hidden_" + str(count), 
+                nn.Sequential(
+                    nn.Linear(hidden_layers[count], hidden_layers[count+1]),
+                    nn.LeakyReLU(leakyRelu)
+                )
+            )
+
+        if escalonate:
+            self.add_module("out", 
+                nn.Sequential(
+                    nn.Linear(hidden_layers[-1], out_features),
+                    nn.Tanh()
+                )
+            )
+        else:
+            self.add_module("out", 
+                nn.Sequential(
+                    nn.Linear(hidden_layers[-1], out_features)
+                )
+            )
     def forward(self, x):
-        x = self.hidden0(x)
-        x = self.hidden1(x)
-        x = self.hidden2(x)
-        x = self.out(x)
+        for name, module in self.named_children():
+            x = module(x)
         return x
