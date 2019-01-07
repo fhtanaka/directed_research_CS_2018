@@ -77,9 +77,6 @@ def fake_data_target(size):
     if torch.cuda.is_available(): return data.cuda()
     return data
 
-file_name="original_data/diabetes_escalonated.csv"
-dataAtts = DataAtts(file_name)
-
 num_epochs=2500
 learning_rate=[0.0002]
 batch_size=[5]
@@ -106,100 +103,104 @@ for lr in learning_rate:
             count+=1
 
 
+file_names=["original_data/diabetes.csv", "original_data/data.csv", "original_data/data_escalonated.csv"]
 
-database = DataSet (csv_file=file_name, root_dir=".")
-for arc in architectures:
-    generatorAtts = {
-        'out_features':dataAtts.class_len, 
-        'leakyRelu':0.2, 
-        'hidden_layers':arc.hidden_layers,
-        'in_features':100, 
-        'escalonate':True
-    }
-    generator = GeneratorNet(**generatorAtts)
-
-    discriminatorAtts = {
-        'in_features':dataAtts.class_len,
-        'leakyRelu':0.2,
-        'dropout':0.3,
-        'hidden_layers':arc.hidden_layers[::-1]
+for file_name in file_names:
+    dataAtts = DataAtts(file_name)
+    database = DataSet (csv_file=file_name, root_dir=".")
     
-    }
-    discriminator = DiscriminatorNet(**discriminatorAtts)
+    for arc in architectures:
+        generatorAtts = {
+            'out_features':dataAtts.class_len, 
+            'leakyRelu':0.2, 
+            'hidden_layers':arc.hidden_layers,
+            'in_features':100, 
+            'escalonate':True
+        }
+        generator = GeneratorNet(**generatorAtts)
 
-    if torch.cuda.is_available():
-        discriminator.cuda()
-        generator.cuda()
-    d_optimizer = optim.Adam(discriminator.parameters(), lr=arc.learning_rate)
-    g_optimizer = optim.Adam(generator.parameters(), lr=arc.learning_rate)
-    loss = arc.loss
-    data_loader = torch.utils.data.DataLoader(database, batch_size=arc.batch_size, shuffle=True)
-    num_batches = len(data_loader)
-    d_error_plt = [0]
-    g_error_plt = [0]
+        discriminatorAtts = {
+            'in_features':dataAtts.class_len,
+            'leakyRelu':0.2,
+            'dropout':0.3,
+            'hidden_layers':arc.hidden_layers[::-1]
+        
+        }
+        discriminator = DiscriminatorNet(**discriminatorAtts)
 
-    generated_points = []
+        if torch.cuda.is_available():
+            discriminator.cuda()
+            generator.cuda()
+        d_optimizer = optim.Adam(discriminator.parameters(), lr=arc.learning_rate)
+        g_optimizer = optim.Adam(generator.parameters(), lr=arc.learning_rate)
+        loss = arc.loss
+        data_loader = torch.utils.data.DataLoader(database, batch_size=arc.batch_size, shuffle=True)
+        num_batches = len(data_loader)
+        d_error_plt = [0]
+        g_error_plt = [0]
 
-    print(arc.name)
-    for epoch in range(num_epochs):
-        print("Epoch ", epoch)
+        generated_points = []
 
-        for n_batch, real_batch in enumerate(data_loader):
-            # 1. Train Discriminator
-            real_data = Variable(real_batch).float()
-            if torch.cuda.is_available(): 
-                real_data = real_data.cuda()
-            # Generate fake data
-            fake_data = generator(noise(real_data.size(0))).detach()
-            # Train D
-            d_error, d_pred_real, d_pred_fake = train_discriminator(d_optimizer,
-                                                                    real_data, fake_data)
+        print(arc.name)
+        for epoch in range(num_epochs):
+            print("Epoch ", epoch)
 
-            # 2. Train Generator
-            # Generate fake data
-            fake_data = generator(noise(real_batch.size(0)))
-            generated_points.append(fake_data)
-            # Train G
-            g_error = train_generator(g_optimizer, fake_data)
+            for n_batch, real_batch in enumerate(data_loader):
+                # 1. Train Discriminator
+                real_data = Variable(real_batch).float()
+                if torch.cuda.is_available(): 
+                    real_data = real_data.cuda()
+                # Generate fake data
+                fake_data = generator(noise(real_data.size(0))).detach()
+                # Train D
+                d_error, d_pred_real, d_pred_fake = train_discriminator(d_optimizer,
+                                                                        real_data, fake_data)
 
-            # Display Progress
+                # 2. Train Generator
+                # Generate fake data
+                fake_data = generator(noise(real_batch.size(0)))
+                generated_points.append(fake_data)
+                # Train G
+                g_error = train_generator(g_optimizer, fake_data)
 
-            #if (n_batch) % print_interval == 0:
-        filename = "results/" + dataAtts.fname + "/" + arc.name + "-epochs_" + str(epoch) + ".txt"
+                # Display Progress
+
+                #if (n_batch) % print_interval == 0:
+            filename = "results/" + dataAtts.fname + "/" + arc.name + "-epochs_" + str(epoch) + ".txt"
+            file = open(filename, "w")
+
+            file.write("Discriminator error: " + str(d_error) + "\n")
+            file.write("Generator error: " + str(g_error) + "\n")
+            file.write("Points: " + str(fake_data) + "\n\n\n")
+
+            d_error_plt.append(d_error)
+            g_error_plt.append(g_error)
+
+        torch.save({
+            'epoch': epoch,
+            'model_attributes': generatorAtts,
+            'model_state_dict': generator.state_dict(),
+            'optimizer_state_dict': g_optimizer.state_dict(),
+            'loss': loss
+            }, "models/" + dataAtts.fname + "/generator_" + arc.name + "-epochs_" + str(epoch) + ".pt")
+
+        torch.save({
+            'epoch': epoch,
+            'model_attributes': discriminatorAtts,
+            'model_state_dict': discriminator.state_dict(),
+            'optimizer_state_dict': d_optimizer.state_dict(),
+            'loss': loss
+            }, "models/" + dataAtts.fname + "/discriminator_" + arc.name + "-epochs_" + str(epoch) + ".pt")
+
+
+        filename = "results/" + dataAtts.fname + "/error_growth_" + arc.name + "-epochs_" + str(epoch) + ".txt"
         file = open(filename, "w")
+        file.write("Discriminator error: " + str(d_error_plt) + "\n")
+        file.write("\n\n\n")
+        file.write("Generator error: " + str(g_error_plt) + "\n")
+        file.close()
 
-        file.write("Discriminator error: " + str(d_error) + "\n")
-        file.write("Generator error: " + str(g_error) + "\n")
-        file.write("Points: " + str(fake_data) + "\n\n\n")
-
-        d_error_plt.append(d_error)
-        g_error_plt.append(g_error)
-
-    torch.save({
-        'epoch': epoch,
-        'model_attributes': generatorAtts,
-        'model_state_dict': generator.state_dict(),
-        'optimizer_state_dict': g_optimizer.state_dict(),
-        'loss': loss
-        }, "models/" + dataAtts.fname + "/generator_" + arc.name + "-epochs_" + str(epoch) + ".pt")
-
-    torch.save({
-        'epoch': epoch,
-        'model_attributes': discriminatorAtts,
-        'model_state_dict': discriminator.state_dict(),
-        'optimizer_state_dict': d_optimizer.state_dict(),
-        'loss': loss
-        }, "models/" + dataAtts.fname + "/discriminator_" + arc.name + "-epochs_" + str(epoch) + ".pt")
-
-
-    filename = "results/" + dataAtts.fname + "/error_growth_" + arc.name + "-epochs_" + str(epoch) + ".txt"
-    file = open(filename, "w")
-    file.write("Discriminator error: " + str(d_error_plt) + "\n")
-    file.write("\n\n\n")
-    file.write("Generator error: " + str(g_error_plt) + "\n")
-    file.close()
-
-    plt.plot(d_error_plt, 'b')
-    plt.plot(g_error_plt, 'r')
-    plt.savefig('images/'+ dataAtts.fname + "/" + arc.name + "-epochs_" + str(epoch) + '_error.png')
-    plt.clf()
+        plt.plot(d_error_plt, 'b')
+        plt.plot(g_error_plt, 'r')
+        plt.savefig('images/'+ dataAtts.fname + "/" + arc.name + "-epochs_" + str(epoch) + '_error.png')
+        plt.clf()

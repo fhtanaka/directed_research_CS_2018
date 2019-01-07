@@ -66,7 +66,7 @@ class DataAtts():
             self.class_len = 9
             self.fname="diabetes"
 
-        if file_name == "original_data/data_escalonated.csv":
+        elif file_name == "original_data/data_escalonated.csv":
             self.message = "Breast Cancer Wisconsin (Diagnostic) Data Set eSCALONATED"
             self.class_name = "diagnosis"
             self.values_names = {0: "Benign", 1: "Malignant"}

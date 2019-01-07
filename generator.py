@@ -50,4 +50,4 @@ class GeneratorNet(torch.nn.Module):
             data=self.forward(points.cuda())
         except RuntimeError:
             data=self.forward(points.cpu())
-        return data
+        return data.detach().numpy()
