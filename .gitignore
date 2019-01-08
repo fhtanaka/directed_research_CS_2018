@@ -58,3 +58,6 @@ creditcard.csv
 data/models/
 runs/
 fake_data/*.csv
+.ipynb_checkpoints/
+*.csv
+images/

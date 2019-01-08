@@ -25,17 +25,17 @@ class GeneratorNet(torch.nn.Module):
                 )
             )
 
-        if escalonate:
+        if not escalonate:
             self.add_module("out", 
                 nn.Sequential(
-                    nn.Linear(self.layers[-1], out_features),
-                    nn.Tanh()
+                    nn.Linear(self.layers[-1], out_features)
                 )
             )
         else:
             self.add_module("out", 
                 nn.Sequential(
-                    nn.Linear(self.layers[-1], out_features)
+                    nn.Linear(self.layers[-1], out_features),
+                    escalonate
                 )
             )
     
