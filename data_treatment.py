@@ -2,6 +2,7 @@ import torch
 import pandas as pd
 import os
 from sklearn import preprocessing
+from sklearn.utils import shuffle
 from torch import nn, optim
 from torch.autograd.variable import Variable
 from torchvision import transforms, datasets, utils
@@ -18,7 +19,7 @@ class ToTensor(object):
 class DataSet(Dataset):
     """Face Landmarks dataset."""
 
-    def __init__(self, csv_file, root_dir, transform=transforms.Compose([ToTensor()]), training_porcentage=0.7):
+    def __init__(self, csv_file, root_dir, transform=transforms.Compose([ToTensor()]), training_porcentage=0.7, shuffle_db=False):
         """
         Args:
             csv_file (string): Path to the csv file with annotations.
@@ -28,6 +29,8 @@ class DataSet(Dataset):
         """
         # self.data = pd.read_csv(csv_file).head(100000)
         self.file = pd.read_csv(csv_file)
+        if (shuffle):
+            self.file = shuffle(self.file)
         self.data = self.file.head(int(self.file.shape[0]*training_porcentage))
         self.test_data = self.file.tail(int(self.file.shape[0]*(1-training_porcentage)))
         self.root_dir = root_dir

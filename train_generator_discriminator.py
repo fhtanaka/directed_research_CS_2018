@@ -6,12 +6,12 @@ from torchvision import transforms, datasets
 from data_treatment import DataSet, DataAtts
 from discriminator import *
 from generator import *
+import os  
 import ipywidgets as widgets
 from IPython.display import display
 import matplotlib.pyplot as plt
 import glob
 from utils import *
-
 
 class Architecture():
     def __init__(self, learning_rate, batch_size, loss, hidden_layers, name):
@@ -21,47 +21,66 @@ class Architecture():
         self.hidden_layers=hidden_layers
         self.name=name
 
-num_epochs=2000
+def save_model(name, epoch, attributes, dictionary, optimizer_dictionary, loss_function, db_name, arch_name):
+    torch.save({
+        'epoch': epoch,
+        'model_attributes': attributes,
+        'model_state_dict': dictionary,
+        'optimizer_state_dict': optimizer_dictionary,
+        'loss': loss_function
+    }, "models/" + db_name + "/" + name + "_" + arch_name + ".pt")
+
+
+# Check if creditcard.csv exists and if so, create a scalonated version of it
+escalonate_creditcard_db()
+if not os.path.isfile('./original_data/creditcard_escalonated.csv'):
+    print("Database creditcard.csv not found, exiting...")
+    exit()
+
+file_names=["original_data/diabetes_escalonated.csv",  "original_data/data_escalonated.csv", "original_data/creditcard_escalonated.csv"]
+num_epochs=[2, 2, 0]
 learning_rate=[0.0002]
 batch_size=[5]
-hidden_layers=[[256]]
+number_of_experiments = 3
+hidden_layers=[[256, 512, 1024], [256, 512], [256], [128, 256, 512], [128, 256], [128]]
+# hidden_layers=[[256, 512], [256], [128, 256], [128]]
+# hidden_layers=[[256]]
 
+#create the different architetures
 architectures=[]
 count=0
 for lr in learning_rate:
     for b_size in batch_size:
         for hidden in hidden_layers:
-            name = str(count)
-            name += "_epochs-" + str(num_epochs)
-            name += "_layer-" + str(len(hidden))
-            name += "_lr-" + str(lr)
-            name += "_batch-" + str(b_size)
-            name += "_arc-" + ','.join(map(str, hidden))
-            architectures.append( Architecture(
-                    learning_rate=lr,
-                    batch_size=b_size,
-                    loss=nn.BCELoss(),
-                    hidden_layers=hidden,
-                    name=name
+            for i in range(number_of_experiments):
+                name = "id-" + str(count)
+                name += "_epochs-" + str(num_epochs[0])
+                name += "_layer-" + str(len(hidden))
+                name += "_lr-" + str(lr)
+                name += "_batch-" + str(b_size)
+                name += "_arc-" + ','.join(map(str, hidden))
+                architectures.append( Architecture(
+                        learning_rate=lr,
+                        batch_size=b_size,
+                        loss=nn.BCELoss(),
+                        hidden_layers=hidden,
+                        name=name
+                    )
                 )
-            )
-            count+=1
+                count+=1
 
 
-file_names=["original_data/diabetes_escalonated.csv",  "original_data/data_escalonated.csv"]
-# file_names=["original_data/creditcard_escalonated.csv", "original_data/creditcard.csv"]
-
-# file_names=["original_data/creditcard_escalonated.csv", "original_data/creditcard.csv"]
-
-for file_name in file_names:
+#training process
+for file_name, epochs in zip(file_names, num_epochs):
     dataAtts = DataAtts(file_name)
-    database = DataSet (csv_file=file_name, root_dir=".")
+    database = DataSet (csv_file=file_name, root_dir=".", shuffle_db=False)
     
     for arc in architectures:
         if ("escalonated" in file_name):
             esc = torch.nn.Sigmoid()
         else:
             esc = False
+
         generatorAtts = {
             'out_features':dataAtts.class_len, 
             'leakyRelu':0.2, 
@@ -88,17 +107,14 @@ for file_name in file_names:
         loss = arc.loss
         data_loader = torch.utils.data.DataLoader(database, batch_size=arc.batch_size, shuffle=True)
         num_batches = len(data_loader)
-        d_error_plt = [0]
-        g_error_plt = [0]
 
-        generated_points = []
-
+        print(dataAtts.fname)
         print(arc.name)
-        for epoch in range(num_epochs):
+        for epoch in range(epochs):
             print("Epoch ", epoch)
 
             for n_batch, real_batch in enumerate(data_loader):
-                # 1. Train Discriminator
+                # 1. Train DdataAtts.fnameiscriminator
                 real_data = Variable(real_batch).float()
                 if torch.cuda.is_available(): 
                     real_data = real_data.cuda()
@@ -110,48 +126,13 @@ for file_name in file_names:
                 # 2. Train Generator
                 # Generate fake data
                 fake_data = generator(random_noise(real_batch.size(0)))
-                generated_points.append(fake_data)
                 # Train G
                 g_error = train_generator(g_optimizer, discriminator, loss, fake_data)
 
                 # Display Progress
 
                 #if (n_batch) % print_interval == 0:
-            filename = "results/" + dataAtts.fname + "/" + arc.name + ".txt"
-            file = open(filename, "w")
 
-            file.write("Discriminator error: " + str(d_error) + "\n")
-            file.write("Generator error: " + str(g_error) + "\n")
-            file.write("Points: " + str(fake_data) + "\n\n\n")
-
-            d_error_plt.append(d_error)
-            g_error_plt.append(g_error)
-
-        torch.save({
-            'epoch': epoch,
-            'model_attributes': generatorAtts,
-            'model_state_dict': generator.state_dict(),
-            'optimizer_state_dict': g_optimizer.state_dict(),
-            'loss': loss
-            }, "models/" + dataAtts.fname + "/generator_" + arc.name + ".pt")
-
-        torch.save({
-            'epoch': epoch,
-            'model_attributes': discriminatorAtts,
-            'model_state_dict': discriminator.state_dict(),
-            'optimizer_state_dict': d_optimizer.state_dict(),
-            'loss': loss
-            }, "models/" + dataAtts.fname + "/discriminator_" + arc.name + ".pt")
-
-
-        filename = "results/" + dataAtts.fname + "/error_growth_" + arc.name + ".txt"
-        file = open(filename, "w")
-        file.write("Discriminator error: " + str(d_error_plt) + "\n")
-        file.write("\n\n\n")
-        file.write("Generator error: " + str(g_error_plt) + "\n")
-        file.close()
-
-        plt.plot(d_error_plt, 'b')
-        plt.plot(g_error_plt, 'r')
-        plt.savefig('images/'+ dataAtts.fname + "/" + arc.name + '_error.png')
-        plt.clf()
+        # From this line on it's just the saving
+        save_model("generator", epoch, generatorAtts, generator.state_dict(), g_optimizer.state_dict(), loss, dataAtts.fname, arc.name)
+        save_model("discriminator", epoch, discriminatorAtts, discriminator.state_dict(), d_optimizer.state_dict(), loss, dataAtts.fname, arc.name)
