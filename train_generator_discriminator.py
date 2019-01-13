@@ -10,6 +10,8 @@ import ipywidgets as widgets
 from IPython.display import display
 import matplotlib.pyplot as plt
 import glob
+from utils import *
+
 
 class Architecture():
     def __init__(self, learning_rate, batch_size, loss, hidden_layers, name):
@@ -19,68 +21,10 @@ class Architecture():
         self.hidden_layers=hidden_layers
         self.name=name
 
-def noise(size):
-    n = Variable(torch.randn(size, 100))
-    if torch.cuda.is_available(): 
-        return n.cuda() 
-    return n
-
-def train_generator(optimizer, fake_data):
-    # 2. Train Generator
-    # Reset gradients
-    optimizer.zero_grad()
-    # Sample noise and generate fake data
-    prediction = discriminator(fake_data)
-    # Calculate error and backpropagate
-    error = loss(prediction, real_data_target(prediction.size(0)))
-    error.backward()
-    # Update weights with gradients
-    optimizer.step()
-    # Return error
-    return error
-
-def train_discriminator(optimizer, real_data, fake_data):
-    # Reset gradients
-    optimizer.zero_grad()
-    
-    # 1.1 Train on Real Data
-    prediction_real = discriminator(real_data)
-    # Calculate error and backpropagate
-    error_real = loss(prediction_real, real_data_target(real_data.size(0)))
-    error_real.backward()
-
-    # 1.2 Train on Fake Data
-    prediction_fake = discriminator(fake_data)
-    # Calculate error and backpropagate
-    error_fake = loss(prediction_fake, fake_data_target(real_data.size(0)))
-    error_fake.backward()
-    
-    # 1.3 Update weights with gradients
-    optimizer.step()
-    
-    # Return error
-    return error_real + error_fake, prediction_real, prediction_fake
-
-def real_data_target(size):
-    '''
-    Tensor containing ones, with shape = size
-    '''
-    data = Variable(torch.ones(size, 1))
-    if torch.cuda.is_available(): return data.cuda()
-    return data
-
-def fake_data_target(size):
-    '''
-    Tensor containing zeros, with shape = size
-    '''
-    data = Variable(torch.zeros(size, 1))
-    if torch.cuda.is_available(): return data.cuda()
-    return data
-
-num_epochs=3000
-learning_rate=[0.0002, 0.001, 0.0005]
+num_epochs=2000
+learning_rate=[0.0002]
 batch_size=[5]
-hidden_layers=[[256, 512], [256], [128, 256], [128]]
+hidden_layers=[[256]]
 
 architectures=[]
 count=0
@@ -104,9 +48,9 @@ for lr in learning_rate:
             count+=1
 
 
-# file_names=["original_data/diabetes_escalonated.csv", "original_data/diabetes.csv", "original_data/data.csv", "original_data/data_escalonated.csv"]
+file_names=["original_data/diabetes_escalonated.csv",  "original_data/data_escalonated.csv"]
 # file_names=["original_data/creditcard_escalonated.csv", "original_data/creditcard.csv"]
-file_names=["original_data/data.csv"]
+
 # file_names=["original_data/creditcard_escalonated.csv", "original_data/creditcard.csv"]
 
 for file_name in file_names:
@@ -159,17 +103,16 @@ for file_name in file_names:
                 if torch.cuda.is_available(): 
                     real_data = real_data.cuda()
                 # Generate fake data
-                fake_data = generator(noise(real_data.size(0))).detach()
+                fake_data = generator(random_noise(real_data.size(0))).detach()
                 # Train D
-                d_error, d_pred_real, d_pred_fake = train_discriminator(d_optimizer,
-                                                                        real_data, fake_data)
+                d_error, d_pred_real, d_pred_fake = train_discriminator(d_optimizer, discriminator, loss, real_data, fake_data)
 
                 # 2. Train Generator
                 # Generate fake data
-                fake_data = generator(noise(real_batch.size(0)))
+                fake_data = generator(random_noise(real_batch.size(0)))
                 generated_points.append(fake_data)
                 # Train G
-                g_error = train_generator(g_optimizer, fake_data)
+                g_error = train_generator(g_optimizer, discriminator, loss, fake_data)
 
                 # Display Progress
 
