@@ -134,5 +134,21 @@ for file_name, epochs in zip(file_names, num_epochs):
                 #if (n_batch) % print_interval == 0:
 
         # From this line on it's just the saving
-        save_model("generator", epoch, generatorAtts, generator.state_dict(), g_optimizer.state_dict(), loss, dataAtts.fname, arc.name)
-        save_model("discriminator", epoch, discriminatorAtts, discriminator.state_dict(), d_optimizer.state_dict(), loss, dataAtts.fname, arc.name)
+        # save_model("generator", epoch, generatorAtts, generator.state_dict(), g_optimizer.state_dict(), loss, dataAtts.fname, arc.name)
+        # save_model("discriminator", epoch, discriminatorAtts, discriminator.state_dict(), d_optimizer.state_dict(), loss, dataAtts.fname, arc.name)
+
+        torch.save({
+            'epoch': epoch,
+            'model_attributes': generatorAtts,
+            'model_state_dict': generator.state_dict(),
+            'optimizer_state_dict': g_optimizer.state_dict(),
+            'loss': loss
+            }, "models/" + dataAtts.fname + "/generator_" + arc.name + ".pt")
+
+        torch.save({
+            'epoch': epoch,
+            'model_attributes': discriminatorAtts,
+            'model_state_dict': discriminator.state_dict(),
+            'optimizer_state_dict': d_optimizer.state_dict(),
+            'loss': loss
+            }, "models/" + dataAtts.fname + "/discriminator_" + arc.name + ".pt")
