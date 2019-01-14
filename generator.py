@@ -48,10 +48,7 @@ class GeneratorNet(torch.nn.Module):
 
     def create_data(self, quantity):
         points = noise(quantity, self.in_features)
-        try:
-            data=self.forward(points.cuda())
-        except RuntimeError:
-            data=self.forward(points.cpu())
+        data=self.forward(points)
         return data.detach().numpy()
 
 def train_generator(optimizer, discriminator, loss, fake_data):

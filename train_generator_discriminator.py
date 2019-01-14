@@ -7,9 +7,9 @@ from data_treatment import DataSet, DataAtts
 from discriminator import *
 from generator import *
 import os  
-import ipywidgets as widgets
-from IPython.display import display
-import matplotlib.pyplot as plt
+# import ipywidgets as widgets
+# from IPython.display import display
+# import matplotlib.pyplot as plt
 import glob
 from utils import *
 
@@ -38,12 +38,12 @@ if not os.path.isfile('./original_data/creditcard_escalonated.csv'):
     exit()
 
 file_names=["original_data/diabetes_escalonated.csv",  "original_data/data_escalonated.csv", "original_data/creditcard_escalonated.csv"]
-num_epochs=[1000, 1000, 2]
+num_epochs=[2000, 2000, 4]
 learning_rate=[0.0002]
 batch_size=[5]
-number_of_experiments = 2
-# hidden_layers=[[256, 512, 1024], [256, 512], [256], [128, 256, 512], [128, 256], [128]]
-hidden_layers=[[256, 512], [256], [128, 256], [128]]
+number_of_experiments = 10
+hidden_layers=[[256, 512, 1024], [256, 512], [256], [128, 256, 512], [128, 256], [128]]
+# hidden_layers=[[256, 512], [256], [128, 256], [128]]
 # hidden_layers=[[256]]
 
 #create the different architetures

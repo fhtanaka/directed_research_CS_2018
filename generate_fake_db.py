@@ -6,9 +6,8 @@ from torchvision import transforms, datasets
 from data_treatment import DataSet, DataAtts
 from discriminator import *
 from generator import *
-import ipywidgets as widgets
-from IPython.display import display
-import matplotlib.pyplot as plt
+# from IPython.display import display
+# import matplotlib.pyplot as plt
 import glob
 
 
@@ -22,12 +21,15 @@ for name in db_names:
 
     folder_name="models/" + original_db_name + "/generator*"
     for file in glob.glob(folder_name):
-        name = file.split("/")[-1][10:-4]
+        name = file.split("/")[-1][10:-3]
         print(name)
         try:
             checkpoint= torch.load(file, map_location='cuda')
         except:
             checkpoint= torch.load(file, map_location='cpu')
+            for key in checkpoint['model_state_dict'].keys():
+                checkpoint['model_state_dict'][key] = checkpoint['model_state_dict'][key].cpu()
+
         generator = GeneratorNet(**checkpoint['model_attributes'])
         generator.load_state_dict(checkpoint['model_state_dict'])
         size = original_db_size
