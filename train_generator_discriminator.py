@@ -38,10 +38,10 @@ if not os.path.isfile('./original_data/creditcard_escalonated.csv'):
     exit()
 
 file_names=["original_data/diabetes_escalonated.csv",  "original_data/data_escalonated.csv", "original_data/creditcard_escalonated.csv"]
-num_epochs=[2000, 2000, 4]
+num_epochs=[1500, 1500, 3]
 learning_rate=[0.0002]
 batch_size=[5]
-number_of_experiments = 10
+number_of_experiments = 20
 hidden_layers=[[256, 512, 1024], [256, 512], [256], [128, 256, 512], [128, 256], [128]]
 # hidden_layers=[[256, 512], [256], [128, 256], [128]]
 # hidden_layers=[[256]]
