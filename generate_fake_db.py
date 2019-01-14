@@ -31,7 +31,7 @@ for name in db_names:
         generator = GeneratorNet(**checkpoint['model_attributes'])
         generator.load_state_dict(checkpoint['model_state_dict'])
         size = original_db_size
-        new_data = generator.create_data(100)
+        new_data = generator.create_data(size)
         df = pd.DataFrame(new_data, columns=original_db.columns)
         name = name + "_size-" + str(size)
         df.to_csv( "fake_data/" + original_db_name + "/" + name + ".csv", index=False)

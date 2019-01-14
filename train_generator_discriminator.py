@@ -38,12 +38,12 @@ if not os.path.isfile('./original_data/creditcard_escalonated.csv'):
     exit()
 
 file_names=["original_data/diabetes_escalonated.csv",  "original_data/data_escalonated.csv", "original_data/creditcard_escalonated.csv"]
-num_epochs=[2, 2, 0]
+num_epochs=[1000, 1000, 2]
 learning_rate=[0.0002]
 batch_size=[5]
-number_of_experiments = 3
-hidden_layers=[[256, 512, 1024], [256, 512], [256], [128, 256, 512], [128, 256], [128]]
-# hidden_layers=[[256, 512], [256], [128, 256], [128]]
+number_of_experiments = 2
+# hidden_layers=[[256, 512, 1024], [256, 512], [256], [128, 256, 512], [128, 256], [128]]
+hidden_layers=[[256, 512], [256], [128, 256], [128]]
 # hidden_layers=[[256]]
 
 #create the different architetures
