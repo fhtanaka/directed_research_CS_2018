@@ -37,11 +37,11 @@ if not os.path.isfile('./original_data/creditcard_escalonated.csv'):
     print("Database creditcard.csv not found, exiting...")
     exit()
 
-file_names=["original_data/diabetes_escalonated.csv",  "original_data/data_escalonated.csv", "original_data/creditcard_escalonated.csv"]
-num_epochs=[1500, 1500, 3]
+file_names=["original_data/creditcard_1s_escalonated.csv"]
+num_epochs=[1500]
 learning_rate=[0.0002]
 batch_size=[5]
-number_of_experiments = 20
+number_of_experiments = 3
 hidden_layers=[[256, 512, 1024], [256, 512], [256], [128, 256, 512], [128, 256], [128]]
 # hidden_layers=[[256, 512], [256], [128, 256], [128]]
 # hidden_layers=[[256]]

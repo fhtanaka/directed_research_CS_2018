@@ -87,6 +87,12 @@ class DataAtts():
             self.values_names = {0: "Normal", 1: "Diabets"}
             self.class_len = 9
             self.fname="diabetes_escalonated"
+        elif file_name == "original_data/creditcard_1s_escalonated.csv":
+            self.message = "Credit Card Fraud Detection eSCALONATED"
+            self.class_name = "Class"
+            self.values_names = {0: "No Frauds", 1: "Frauds"}
+            self.class_len = 31
+            self.fname="creditcard_1s_escalonated"
         else:
             print("File not found, exiting")
             exit()
