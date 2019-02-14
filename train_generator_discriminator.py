@@ -38,12 +38,12 @@ if not os.path.isfile('./original_data/creditcard_escalonated.csv'):
     exit()
 
 file_names=["original_data/creditcard_1s_escalonated.csv"]
-num_epochs=[1500]
+num_epochs=[5000]
 learning_rate=[0.0002]
 batch_size=[5]
-number_of_experiments = 3
-hidden_layers=[[256, 512, 1024], [256, 512], [256], [128, 256, 512], [128, 256], [128]]
-# hidden_layers=[[256, 512], [256], [128, 256], [128]]
+number_of_experiments = 5
+#hidden_layers=[[256, 512]]
+hidden_layers=[[256, 512], [256], [128, 256], [128]]
 # hidden_layers=[[256]]
 
 #create the different architetures
@@ -111,7 +111,8 @@ for file_name, epochs in zip(file_names, num_epochs):
         print(dataAtts.fname)
         print(arc.name)
         for epoch in range(epochs):
-            print("Epoch ", epoch)
+            if (epoch % 100 == 0):
+                print("Epoch ", epoch)
 
             for n_batch, real_batch in enumerate(data_loader):
                 # 1. Train DdataAtts.fnameiscriminator
