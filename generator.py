@@ -2,6 +2,7 @@ import torch
 from torch import nn, optim
 from torch.autograd.variable import Variable
 from torchvision import transforms, datasets
+from utils import real_data_target
 
 def noise(quantity, size):
     return Variable(torch.randn(quantity, size))
@@ -51,3 +52,17 @@ class GeneratorNet(torch.nn.Module):
         except RuntimeError:
             data=self.forward(points.cpu())
         return data.detach().numpy()
+
+def train_generator(optimizer, discriminator, loss, fake_data):
+    # 2. Train Generator
+    # Reset gradients
+    optimizer.zero_grad()
+    # Sample noise and generate fake data
+    prediction = discriminator(fake_data)
+    # Calculate error and backpropagate
+    error = loss(prediction, real_data_target(prediction.size(0)))
+    error.backward()
+    # Update weights with gradients
+    optimizer.step()
+    # Return error
+    return error

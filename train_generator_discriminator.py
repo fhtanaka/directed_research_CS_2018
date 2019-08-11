@@ -12,6 +12,7 @@ import os
 # import matplotlib.pyplot as plt
 import glob
 from utils import *
+    
 
 class Architecture():
     def __init__(self, learning_rate, batch_size, loss, hidden_layers, name):
@@ -32,13 +33,13 @@ def save_model(name, epoch, attributes, dictionary, optimizer_dictionary, loss_f
 
 
 # Check if creditcard.csv exists and if so, create a scalonated version of it
-escalonate_creditcard_db()
-if not os.path.isfile('./original_data/creditcard_escalonated.csv'):
+# escalonate_creditcard_db()
+if not os.path.isfile('./original_data/diabetes_escalonated.csv'):
     print("Database creditcard.csv not found, exiting...")
     exit()
 
-file_names=["original_data/creditcard_1s_escalonated.csv"]
-num_epochs=[5000]
+file_names=["original_data/diabetes_escalonated.csv"]
+num_epochs=[500]
 learning_rate=[0.0002]
 batch_size=[5]
 number_of_experiments = 5

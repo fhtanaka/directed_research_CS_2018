@@ -2,6 +2,7 @@ import torch
 from torch import nn, optim
 from torch.autograd.variable import Variable
 from torchvision import transforms, datasets
+from utils import real_data_target, fake_data_target
 
 class DiscriminatorNet(torch.nn.Module):
     """
@@ -34,3 +35,26 @@ class DiscriminatorNet(torch.nn.Module):
         for name, module in self.named_children():
             x = module(x)
         return x
+
+# train_discriminator(d_optimizer, discriminator, loss, real_data, fake_data)
+def train_discriminator(optimizer, discriminator, loss, real_data, fake_data):
+    # Reset gradients
+    optimizer.zero_grad()
+    
+    # 1.1 Train on Real Data
+    prediction_real = discriminator(real_data)
+    # Calculate error and backpropagate
+    error_real = loss(prediction_real, real_data_target(real_data.size(0)))
+    error_real.backward()
+
+    # 1.2 Train on Fake Data
+    prediction_fake = discriminator(fake_data)
+    # Calculate error and backpropagate
+    error_fake = loss(prediction_fake, fake_data_target(real_data.size(0)))
+    error_fake.backward()
+    
+    # 1.3 Update weights with gradients
+    optimizer.step()
+    
+    # Return error
+    return error_real + error_fake, prediction_real, prediction_fake
