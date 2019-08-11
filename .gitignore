@@ -57,7 +57,8 @@ creditcard.csv
 *.dot
 data/models/
 runs/
-fake_data/*.csv
+fake_data/*
 .ipynb_checkpoints/
 *.csv
 images/
+*.pt
